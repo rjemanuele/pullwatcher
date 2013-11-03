@@ -75,7 +75,7 @@ end)
 
 --Go
 server = http.createServer(handler)
-p(config)
+
 c:connect (config.irc.host, config.irc.port, config.irc.nick, {ssl=config.irc.ssl})
 server:listen(config.http.port, config.irc.host)
 
