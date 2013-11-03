@@ -1,4 +1,7 @@
+#!/usr/bin/env luvit
+
 local http = require("http")
+local io = require("io")
 local JSON = require('json')
 local parse = require('querystring').parse
 local string = require('string')
@@ -6,7 +9,27 @@ local irc = require("luvit-irc")
 
 local server
 local c
-local channel
+
+--Configure
+local argv = require('luvit-options')
+  .usage("Usage: ./bot.lua ....")
+  .describe("c", "config file location")
+  .alias({["c"]="config"})
+  .demand({'c'})
+  .argv("c:")
+
+if not argv.args.c then
+  process.exit(1)
+end
+
+local config = {}
+local f = io.open(argv.args.c, "r")
+if f ~= nil then
+  local content = f:read("*all")
+  f:close()
+  config = JSON.parse(content)
+end
+
 
 --Hook Handler
 local function handler(request, response)
@@ -33,19 +56,17 @@ local function handler(request, response)
 	   t.issue.html_url,
 	   plus)
 	   p(give)
-	 c:privmsg (channel, give)
+	 c:privmsg (config.irc.channel, give)
 	end
     end)
   end)
 end
 
 --IRC Setup
-local host = "chat.freenode.net"
-channel = '#rjetest'
 c = irc.new ()
 c:on ("connected", function (x)
   p("connected bot")
-  c:join(channel)
+  c:join(config.irc.channel)
 end)
 c:on ("data", function (x)
   p("::: "..x)
@@ -54,8 +75,8 @@ end)
 
 --Go
 server = http.createServer(handler)
+p(config)
+c:connect (config.irc.host, config.irc.port, config.irc.nick, {ssl=config.irc.ssl})
+server:listen(config.http.port, config.irc.host)
 
-c:connect (host, 6667, "ghpw", {ssl=false})
-server:listen(8080)
-
-print("Server listening at http://localhost:8080/")
+print(string.format("Server listening at http://%s:%d/", config.irc.host, config.irc.port))

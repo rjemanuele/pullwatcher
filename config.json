@@ -1,0 +1,13 @@
+{
+  "irc": {
+    "nick": "sometestnick",
+    "host": "chat.freenode.net",
+    "port": 7000,
+    "ssl": true,
+    "channel": "#sometestchannel"
+  },
+  "http": {
+    "addr": "0.0.0.0",
+    "port": 8080
+  }
+}
