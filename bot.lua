@@ -71,7 +71,11 @@ end)
 c:on ("data", function (x)
   p("::: "..x)
 end)
-
+c:on ("privmsg", function (nick, msg)
+  if nick:sub(1,1) ~= '#' or msg:find("^" .. config.irc.nick .. "[%p ]") then
+    c:privmsg (nick, "This bot has nothing to say yet, see: http://github.com/rjemanuele/pullwatcher")
+  end
+end)
 
 --Go
 server = http.createServer(handler)
