@@ -56,7 +56,7 @@ local function handler(request, response)
 	   t.issue.html_url,
 	   plus)
 	   p(give)
-	 c:privmsg (config.irc.channel, give)
+	 c:privmsg (config.irc.channel.name, give)
 	end
     end)
   end)
@@ -66,7 +66,7 @@ end
 c = irc.new ()
 c:on ("connected", function (x)
   p("connected bot")
-  c:join(config.irc.channel)
+  c:join(config.irc.channel.name .. " " .. config.irc.channel.password)
 end)
 c:on ("data", function (x)
   p("::: "..x)
@@ -77,6 +77,6 @@ end)
 server = http.createServer(handler)
 
 c:connect (config.irc.host, config.irc.port, config.irc.nick, {ssl=config.irc.ssl})
-server:listen(config.http.port, config.irc.host)
+server:listen(config.http.port, config.http.addr)
 
-print(string.format("Server listening at http://%s:%d/", config.irc.host, config.irc.port))
+print(string.format("Server listening at http://%s:%d/", config.http.addr, config.http.port))
