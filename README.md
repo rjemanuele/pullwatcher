@@ -19,5 +19,6 @@ ToDo
 ----
 
 * Add an IRC side interface
-** Map IRC users to GitHub users
+  * Map IRC users to GitHub users
+  * Store that data in an sqlite3 db
 * Add package info
