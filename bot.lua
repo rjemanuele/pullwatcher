@@ -2,7 +2,7 @@ local http = require("http")
 local JSON = require('json')
 local parse = require('querystring').parse
 local string = require('string')
-local irc = require("irc")
+local irc = require("luvit-irc")
 
 local server
 local c
