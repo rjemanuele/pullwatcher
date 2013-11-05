@@ -51,10 +51,11 @@ local function handler(request, response)
        plus, count = string.gsub(t.comment.body, ".*([%+%-]%d+).*", "%1")
        --p("ret", plus, count)
        if count > 0 then
-         local give = string.format("%s has given %s a %s",
+         local give = string.format("%s has %s'd %s's %s",
            t.sender.login,
-	   t.issue.html_url,
-	   plus)
+           plus,
+           t.issue.user.login,
+	   t.issue.html_url)
 	   p(give)
 	 c:privmsg (config.irc.channel.name, give)
 	end
