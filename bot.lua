@@ -77,6 +77,11 @@ c:on ("privmsg", function (nick, msg)
     c:privmsg (nick, "This bot has nothing to say yet, see: http://github.com/rjemanuele/pullwatcher")
   end
 end)
+c:on ("notice", function (orig, msg)
+  if config.irc.nick_pass and msg:find("/msg NickServ identify") then
+    c:privmsg ("NickServ", "identify " .. config.irc.nick_pass)
+  end
+end)
 
 --Go
 server = http.createServer(handler)
