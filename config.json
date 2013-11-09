@@ -2,8 +2,8 @@
   "irc": {
     "nick": "sometestnick",
     "host": "chat.freenode.net",
-    "port": 6667,
-    "ssl": false,
+    "port": 7000,
+    "ssl": true,
     "channel": {
       "name": "#sometestchannel",
       "password": "channelpassifneeded"

@@ -32,7 +32,7 @@ end
 
 
 --Hook Handler
-local function handler(request, response)
+local function webhook_handler(request, response)
   local postBuffer = ''
   request:on('data', function(chunk)
     postBuffer = postBuffer .. chunk
@@ -57,36 +57,49 @@ local function handler(request, response)
            t.issue.user.login,
 	   t.issue.html_url)
 	   p(give)
-	 c:privmsg (config.irc.channel.name, give)
+	 c:privmsg(config.irc.channel.name, give)
 	end
     end)
   end)
 end
 
+
+--IRC Handler
+local function irc_handler(origin, nick, msg)
+  if origin == config.irc.nick then
+     origin = nick
+  end
+  c:privmsg(origin, "This bot has nothing to say yet, see: http://github.com/rjemanuele/pullwatcher")
+end
+
+
 --IRC Setup
-c = irc.new ()
-c:on ("connected", function (x)
-  p("connected bot")
+c = irc:new()
+c:on("connected", function (x)
   c:join(config.irc.channel.name .. " " .. config.irc.channel.password)
 end)
-c:on ("data", function (x)
+c:on("data", function (x)
   p("::: "..x)
 end)
-c:on ("privmsg", function (nick, msg)
-  if nick:sub(1,1) ~= '#' or msg:find("^" .. config.irc.nick .. "[%p ]") then
-    c:privmsg (nick, "This bot has nothing to say yet, see: http://github.com/rjemanuele/pullwatcher")
+c:on("privmsg", function (origin, nick, msg)
+  if origin:sub(1,1) ~= '#' then
+    irc_handler(origin, nick, msg)
+  end
+  local _, i =  msg:gsub("^" .. config.irc.nick .. "[%p ][ ]*", "")
+  if i == 1 then
+    irc_handler(origin, nick, msg)
   end
 end)
-c:on ("notice", function (orig, msg)
+c:on("notice", function (orig, msg)
   if config.irc.nick_pass and msg:find("/msg NickServ identify") then
     c:privmsg ("NickServ", "identify " .. config.irc.nick_pass)
   end
 end)
 
---Go
-server = http.createServer(handler)
 
-c:connect (config.irc.host, config.irc.port, config.irc.nick, {ssl=config.irc.ssl})
+--Go
+server = http.createServer(webhook_handler)
+c:connect(config.irc.host, config.irc.port, config.irc.nick, {ssl=config.irc.ssl})
 server:listen(config.http.port, config.http.addr)
 
 print(string.format("Server listening at http://%s:%d/", config.http.addr, config.http.port))
