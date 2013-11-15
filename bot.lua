@@ -44,21 +44,21 @@ local function webhook_handler(request, response)
     --p("request", request)
     --p("postBuffer", postBuffer)
     ret, error = pcall(function()
-       t = JSON.parse(postBuffer)
-       --p("final", t)
-       --p(t.comment.body)
-       local plus, count
-       plus, count = string.gsub(t.comment.body, ".*([%+%-]%d+).*", "%1")
-       --p("ret", plus, count)
-       if count > 0 then
-         local give = string.format("%s has %s'd %s's %s",
-           t.sender.login,
-           plus,
-           t.issue.user.login,
-	   t.issue.html_url)
-	   p(give)
-	 c:privmsg(config.irc.channel.name, give)
-	end
+      t = JSON.parse(postBuffer)
+      --p("final", t)
+      --p(t.comment.body)
+      string.gsub(
+        " " .. t.comment.body .. " ",
+        "[%s%p%c]([%+%-]%d+)[%s%p%c]",
+        function(plus)
+          local give = string.format("%s has %s'd %s's %s",
+            t.sender.login,
+            plus,
+            t.issue.user.login,
+            t.issue.html_url)
+          p(give)
+          c:privmsg(config.irc.channel.name, give)
+        end)
     end)
   end)
 end
