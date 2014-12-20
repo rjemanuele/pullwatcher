@@ -76,10 +76,17 @@ end
 --IRC Setup
 c = irc:new()
 c:on("connected", function (x)
-  c:join(config.irc.channel.name .. " " .. config.irc.channel.password)
+  local chan = config.irc.channel.name
+  if config.irc.channel.password then
+    chan = chan .. " " .. config.irc.channel.password
+  end
+  c:join(chan)
 end)
 c:on("data", function (x)
-  p("::: "..x)
+  p(":>: "..x)
+end)
+c:on("dataout", function (x)
+  p(":<: "..x)
 end)
 c:on("privmsg", function (origin, nick, msg)
   if origin:sub(1,1) ~= '#' then
@@ -99,7 +106,7 @@ end)
 
 --Go
 server = http.createServer(webhook_handler)
-c:connect(config.irc.host, config.irc.port, config.irc.nick, {ssl=config.irc.ssl})
+c:connect(config.irc.host, config.irc.port, config.irc.user or config.irc.nick, config.irc.nick, {ssl=config.irc.ssl, sasl_auth=config.irc.sasl_auth})
 server:listen(config.http.port, config.http.addr)
 
 print(string.format("Server listening at http://%s:%d/", config.http.addr, config.http.port))
