@@ -36,6 +36,9 @@ end
 --Hook Handler
 local function webhook_handler(request, response)
   local postBuffer = ''
+  request:on('error', function(err)
+    p("Request Error", request, err)
+  end)
   request:on('data', function(chunk)
     postBuffer = postBuffer .. chunk
   end)
