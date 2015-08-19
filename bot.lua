@@ -52,6 +52,10 @@ local function webhook_handler(request, response)
       t = JSON.parse(postBuffer)
       --p("final", t)
       --p(t.comment.body)
+      -- ignore closed PRs
+      if t.pull_request.state == 'closed' then
+        do return end
+      end
       string.gsub(
         " " .. t.comment.body .. " ",
         "[%s%p%c]([%+%-]%d+)[%s%p%c]",
