@@ -15,6 +15,8 @@ Configuration
 
 See the example config.json
 
+Note that you connect to multiple IRC networks.
+
 Watching a new repo
 -------------------
 
