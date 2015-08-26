@@ -7,21 +7,22 @@ local io = require("io")
 local JSON = require('json')
 local parse = require('querystring').parse
 local string = require('string')
-local irc = require("luvit-irc")
+local irc = require('./libs/irc').irc
 
 local server
 local m
 
 --Configure
-local argv = require('luvit-options')
-  .usage("Usage: ./bot.lua ....")
+local argv = require('options')
   .describe("c", "config file location")
   .alias({["c"]="config"})
-  .demand({'c'})
   .argv("c:")
 
+argv.usage("Usage: ./bot.lua ....")
+
 if not argv.args.c then
-  process.exit(1)
+  argv.showUsage("c:")
+  process:exit(1)
 end
 
 local config = {}
@@ -46,8 +47,8 @@ local function webhook_handler(request, response)
     response:write("Hello")
     response:finish()
     local t = ''
-    p("request", request)
-    p("postBuffer", postBuffer)
+    --p("request", request)
+    --p("postBuffer", postBuffer)
     ret, error = pcall(function()
       t = JSON.parse(postBuffer)
       --p("final", t)
@@ -147,9 +148,9 @@ function MultiBot:sendtoall(msg)
 end
 
 
-process:on('error', function(err)
-  p('Fatal error', err)
-  process.exit(255)
+process:on('error', function(err, ...)
+  p('Fatal error', err, ...)
+  process:exit(255)
 end)
 
 --Go
