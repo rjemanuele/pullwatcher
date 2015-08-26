@@ -54,25 +54,31 @@ local function webhook_handler(request, response)
       --p("final", t)
       --p('body', t.comment.body)
       --p('action', t.action)
-      if t.action == 'opened' then
-        local give = string.format("%s opened %s",
-          t.pull_request.user.login,
-          t.pull_request.html_url)
-        p(give)
-        m:sendtoall(give)
-      end
-      string.gsub(
-        " " .. t.comment.body .. " ",
-        "[%s%p%c]([%+%-]%d+)[%s%p%c]",
-        function(plus)
-          local give = string.format("%s has %s'd %s's %s",
-            t.sender.login,
-            plus,
-            t.issue.user.login,
-            t.issue.html_url)
+      -- Pull Request Information
+      if t.pull_request ~= nil then
+        if t.action == 'opened' then
+          local give = string.format("%s opened %s",
+            t.pull_request.user.login,
+            t.pull_request.html_url)
           p(give)
           m:sendtoall(give)
-        end)
+        end
+      end
+      --Issue / PR Comment Information
+      if t.issue ~= nil then
+        string.gsub(
+          " " .. t.comment.body .. " ",
+          "[%s%p%c]([%+%-]%d+)[%s%p%c]",
+          function(plus)
+            local give = string.format("%s has %s'd %s's %s",
+              t.sender.login,
+              plus,
+              t.issue.user.login,
+              t.issue.html_url)
+            p(give)
+            m:sendtoall(give)
+          end)
+      end
     end)
   end)
 end
