@@ -51,7 +51,15 @@ local function webhook_handler(request, response)
     ret, error = pcall(function()
       t = JSON.parse(postBuffer)
       --p("final", t)
-      --p(t.comment.body)
+      --p('body', t.comment.body)
+      --p('action', t.action)
+      if t.action == 'opened' then
+        local give = string.format("%s opened %s",
+          t.pull_request.user.login,
+          t.pull_request.html_url)
+        p(give)
+        m:sendtoall(give)
+      end
       string.gsub(
         " " .. t.comment.body .. " ",
         "[%s%p%c]([%+%-]%d+)[%s%p%c]",
