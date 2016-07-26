@@ -22,7 +22,7 @@ Watching a new repo
 
 To get the bot to watch a new github repo, simply run:
 ```
-./github_setup.sh [your-github-username] [repo-owner] [repo-name] [server]:[port]
+./github_setup.sh [your-github-username] [repo-owner] [repo-name] [server]:[port] {[your-github-2fa-token]}
 ```
 
 This will configure a github webhook that posts new PR events to the bot.
